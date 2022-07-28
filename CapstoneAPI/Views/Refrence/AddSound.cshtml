@@ -1,0 +1,77 @@
+﻿
+    <br />
+
+     <div class = "mb-3">
+   <h2>Testing Page</h2>
+   <div>
+        <input type="text" class="form-control" type="number" min="1" max="10000" id="soundValue" required placeholder="Sound Value">
+   </div>
+   <div>
+       <input type="text" class="form-control" type="number" min="1" max="10000" id="messageCounter" required placeholder="Counter Value">
+   </div>
+   <div>
+       <input type="text" class="form-control" id="userID" required placeholder="UserID">
+   </div>
+   
+    
+    
+    <br>
+    </div>
+
+    
+    <br>
+
+    <div class = "mb-3">
+    <button onclick="listValues()" class="btn btn-primary" style="width:300px">List All Sound Values</button>
+    <button onclick="clearData()" class="btn btn-primary" style="width:300px">Clear All Sound Values</button>
+    <button onclick="postData()" class="btn btn-primary" style="width:300px">Add Value</button>
+    <p id="soundList"> </p>
+    </div>
+    <br>
+
+
+    <script>
+        async function listValues() {
+            let userID = document.getElementById("userID").value;
+            await fetch("http://localhost:5026/sounds/all?userID=" + userID) // need to know which user to list
+                //fetch("http://csd480capstoneapi.azurewebsites.net/sounds/all")
+
+                .then(function (response) { return response.json(); })
+                .then(function (data) { printValues(data); })
+                .catch(function (err) { console.log(err); });
+        }
+
+         async function clearData() {
+            await fetch("http://localhost:5026/sounds/clear");
+            //await fetch("http://csd480capstoneapi.azurewebsites.net/sounds/clear");
+            listValues();
+        }
+
+            function printValues(data) {
+            let soundList = "";
+            // console.log(data);
+            // console.log(data[0][0]);
+            if (data[0] != null) {
+                for (let i = 0; i < data.length; i++) {
+                    soundList += data[i][0]
+                    soundList += " | "
+                    soundList += data[i][1]
+                    soundList += " | "
+                    soundList += data[i][2]
+                    soundList += "<br>"
+                }
+            }
+
+            document.getElementById("soundList").innerHTML = soundList;
+        }
+
+        async function postData() {
+            let soundValue = document.getElementById("soundValue").value;
+            let messageCounter = document.getElementById("messageCounter").value;
+            let userID = document.getElementById("userID").value;
+            await fetch("http://localhost:5026/sounds/post?soundValue=" + soundValue + "&messageNumber=" + messageCounter + "&userID=" + userID);
+            //await fetch("http://csd480capstoneapi.azurewebsites.net/sounds/post?soundValue="+ soundValue + "&messageNumber=" + messageCounter+ "&userID=" + userID);
+
+            listValues();
+        }
+        </script>

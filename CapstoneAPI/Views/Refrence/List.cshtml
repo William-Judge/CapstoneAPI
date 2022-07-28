@@ -1,0 +1,226 @@
+﻿
+
+    <div class="text-center">
+        <br />
+        <br />
+        <h2>List Current Alerts</h2> 
+    </div>
+
+
+
+    @*<div class = "mb-3">
+       @* <input id="userID" class="form-control" type="text"  required placeholder="Add a UserID"/>*@
+    @*</div>*@
+     
+<div class="container">
+
+    <br /> 
+ 
+     
+       
+<div class="row">
+        <div class = "col">
+
+        </div>
+        
+        <div class = "col">
+             <button onclick="listValues()" class="btn btn-primary" style="width:300px">List All Sound Values</button>
+        </div>
+
+        <div class = "col">
+            <button onclick="clearData()" class="btn btn-primary" style="width:300px">Clear All Sound Values</button>
+        </div>
+
+        <div class = "col">
+             <a asp-controller ="Home" asp-action="IndexAfterLogin" class="btn btn-primary" sytle="width:300px"> Back to List </a>
+        </div>
+
+        <div class = "col">
+
+        </div>
+
+
+    </div>
+
+</div>
+@*<div class="c">
+    
+    
+    <button onclick="listValues()" class="btn btn-secondary" style="width:300px">List All Sound Values</button>
+    <div>
+    <button onclick="clearData()" class="btn btn-secondary" style="width:300px">Clear All Sound Values</button>
+    
+     <a asp-controller ="Home" asp-action="IndexAfterLogin" class="btn btn-secondary" sytle="width:300px"> Back to List </a>
+</div>
+*@
+
+<div class = container>
+    <br />
+    <br />
+    <div class = row>
+        
+        <div class = col>
+
+        </div>
+        <div class="col"  >
+
+            <div class="list-group" style="border:10px">
+            
+            <h2 style="text-align:center"> Sound Value </h2>
+            <h2 id="soundValCol" style="text-align:center"> </h2>
+            </div>
+        </div>
+         <div class = col >
+            <div class="list-group">
+
+             <h2 style="text-align:center"> Counter Value </h2>
+             <h2 id="soundList" style="text-align:center"> </h2>
+             </div>
+        </div>
+         <div class = col>
+            <div class="list-group">
+
+             <h2 style="text-align:center"> User </h2>
+             <h2 id="userName" style="text-align:center"></h2>
+             </div>
+        </div>
+        <div class = col>
+
+        </div>
+        
+
+        @*<p  id="soundList"> </p>*@
+    </div>
+</div>
+
+
+@*<p  id="soundList"> </p>*@
+
+@*<p type ="hidden" id="userID"> test</p>*@
+
+@*<button onclick="tester()">print cookie userid to console</button>*@
+
+<input type="hidden" id="userID" value=cookieGetUserid() />
+
+@*<div id="table">
+    <table>
+        <tr>
+            <th>Value</th>
+            <th>Counter</th>
+            <th>User</th>
+        </tr>
+
+    </table>
+</div>
+<table>*@
+
+</table>
+
+
+<script>
+        async function listValues() {
+            let userID = document.getElementById("userID").value;
+            await fetch("http://localhost:5026/sounds/all?userID=" + userID) // need to know which user to list
+                //fetch("http://csd480capstoneapi.azurewebsites.net/sounds/all")
+
+                .then(function (response) { return response.json(); })
+                .then(function (data) { printValues(data); })
+                .catch(function (err) { console.log(err); });
+        }
+
+         async function clearData() {
+            await fetch("http://localhost:5026/sounds/clear");
+            //await fetch("http://csd480capstoneapi.azurewebsites.net/sounds/clear");
+            listValues();
+        }
+
+         
+
+          function printValues(data) {
+              let soundList = "";
+              let soundValCol = "";
+              let userName = "";
+            // console.log(data);
+            // console.log(data[0][0]);
+            if (data[0] != null) {
+                for (let i = 0; i < data.length; i++) {
+                    soundValCol += data[i][0]
+                    soundValCol += "<br>"
+                    
+                    soundList += data[i][1]
+                    soundList += "<br>"
+
+                    userName += data[i][2]
+                    userName += "<br>"
+                }
+            }
+
+            document.getElementById("soundValCol").innerHTML = soundValCol;
+            document.getElementById("soundList").innerHTML = soundList;
+            document.getElementById("userName").innerHTML = userName;
+        }
+
+
+
+        async function postData() {
+            let soundValue = document.getElementById("soundValue").value;
+            let messageCounter = document.getElementById("messageCounter").value;
+            let userID = document.getElementById("userID").value;
+            await fetch("http://localhost:5026/sounds/post?soundValue=" + soundValue + "&messageNumber=" + messageCounter + "&userID=" + userID);
+            //await fetch("http://csd480capstoneapi.azurewebsites.net/sounds/post?soundValue="+ soundValue + "&messageNumber=" + messageCounter+ "&userID=" + userID);
+
+            listValues();
+        }
+
+        
+        function cookieSetUserid() { // create cookie
+            // get userid from html
+            let userID = document.getElementById("userID").value;
+
+            const d = new Date();
+            const days = 7; // number of days cookie lives
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+
+            document.cookie = "CSD480_UserId=" + userID + ";" + expires + ";path=/";
+        }
+
+        function cookieDeleteUserid() { // delete cookie
+            document.cookie = "CSD480_UserId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        function cookieGetUserid() { // get cookie
+            let name = "CSD480_UserId=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    console.log(c.substring(name.length, c.length));
+                    
+                    document.getElementById("userID").value = (c.substring(name.length, c.length));
+                    
+                    //return c.substring(name.length, c.length);
+                    //document.getElementById("userID").innerText = "here bitch";
+                    
+                }
+            }
+            return "";
+        }
+
+        function tester() {
+            document.getElementById("userID").innerText = "test2";
+        }
+
+        // Load the userID
+
+        window.onload = cookieGetUserid;
+
+        // Create the table formating
+
+    
+
+        </script>

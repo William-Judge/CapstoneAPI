@@ -1,0 +1,154 @@
+﻿@model Sound
+
+@*<form method = "post">*@
+    <div class="border p-3 mt-4">
+        <div class="row pb-2"
+        <h2> Update Contact</h2>
+        <hr />
+    </div>
+
+   
+
+    <div class = "mb-3">
+        <input id="pNumber" class="form-control" type="text" required placeholder="Phone Number"/>
+    </div>
+
+    <div class = "mb-3">
+        <input id="userName" class="form-control" type="text" required placeholder="User Name"/>
+    </div>
+
+  <div class = container>
+      <div class = row>
+          <div class = col>
+
+          </div>
+          <div class = col>
+              <button onClick="cookieSetUserPhone()" class="btn btn-primary" style="width:300px"> Update Contact </button>
+          </div>
+          <div class = col>
+              <button type ="reset" class="btn btn-primary" style="width:300px">Clear</button>
+          </div>
+          <div class = col>
+                 <a asp-controller ="Home" asp-action="IndexAfterLogin" class="btn btn-primary" sytle="width:300px">
+        Back to List
+    </a>
+          </div>
+          <div class = col>
+            
+          </div>
+      </div>
+
+  </div>
+
+  <input type="hidden" id="userID" value=cookieGetUserid() />
+
+    <p id="Phone"></p>
+
+    
+    <!-- Leaves a summary at top of the page-->
+    @*<div asp-validation-summary="All"></div>*@
+    @*<div class="mb-3">
+        <label asp-for="userName"></label>
+        <input asp-for="userName" class="form-control" />
+        <span asp-validation-for = "userName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="phone"></label>
+        <input asp-for="phone" class="form-control" />
+        <span asp-validation-for = "phone" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+    <a asp-controller ="Home" asp-action="IndexAfterLogin" class="btn btn-secondary" sytle="width:150px">
+        Back to List
+    </a>
+    </div>*@
+
+@*</form>*@
+
+@*<button onclick="cookieGetUserPhone()"> print cookie userid to console</button>*@
+
+<script>
+    async function setSMS() {
+            let phoneNumber = document.getElementById("pNumber").value;
+            let message = document.getElementById("message").value;
+            let threshold = document.getElementById("threshold").value;
+            let userID = document.getElementById("userID").value;
+            await fetch(`http://localhost:5026/sounds/setSMS?phoneNumber=${phoneNumber}&message=${message}&threshold=${threshold}&userID=${userID}`);
+            //await fetch(`http://csd480capstoneapi.azurewebsites.net/sounds/setSMS?phoneNumber=${phoneNumber}&message=${message}&threshold=${threshold}&userID=${userID}`);
+        }
+
+    function cookieSetUserPhone() { // create cookie
+            // get userid from html
+            let userPhone = document.getElementById("pNumber").value;
+
+            const d = new Date();
+            const days = 7; // number of days cookie lives
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+
+            document.cookie = "CSD480_UserPhone=" + userID + ";" + expires + ";path=/";
+        }
+
+        function cookieDeleteUserPhone() { // delete cookie
+            document.cookie = "CSD480_UserPhone=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        function cookieGetUserPhone() { // get cookie
+            let name = "CSD480_UserPhone=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    console.log(c.substring(name.length, c.length));
+                    // return c.substring(name.length, c.length);
+                    document.getElementById("Phone").innerText = (c.substring(name.length, c.length));
+                    //document.getElementById("Nammz") = "here is the cookie one";
+                    
+                }
+            }
+            return "";
+        }
+
+        // update for user
+        // COOKIE STUFF
+        function cookieSetUserid() { // create cookie
+            // get userid from html
+            let userID = document.getElementById("userID").value;
+
+            const d = new Date();
+            const days = 7; // number of days cookie lives
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+
+            document.cookie = "CSD480_UserId=" + userID + ";" + expires + ";path=/";
+        }
+
+        function cookieDeleteUserid() { // delete cookie
+            document.cookie = "CSD480_UserId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        function cookieGetUserid() { // get cookie
+            let name = "CSD480_UserId=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    console.log(c.substring(name.length, c.length));
+                    document.getElementById("userID").value = (c.substring(name.length, c.length));
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        window.onload = cookieGetUserid;
+
+</script>

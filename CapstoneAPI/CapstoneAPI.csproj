@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="System.Data.SqlClient" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Refrence\AddNew.cshtml" />
+    <None Include="Views\Refrence\ContactInfo.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="Twilio" Version="5.75.0" />
+  </ItemGroup>
+</Project>

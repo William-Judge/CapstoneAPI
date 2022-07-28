@@ -1,0 +1,158 @@
+﻿@model Sound
+
+
+<form method = "post">
+   <div class="mb-3">
+       <br />
+       <br />
+       <br />
+   </div>
+     
+
+     <div class ="mb-3">
+        <h2 text-align:center> Add New Notification</h2>
+    </div>
+
+    <div class="mb-3">
+       @* <label for="threshold" >Threshold</label>*@
+        <input id="threshold" class="form-control" type="number" min="1" max="10000" required placeholder="Threshold Value"/>
+        
+    </div>
+
+    <div class = "mb-3">
+        <input id="message" class="form-control" type="text"  required placeholder="Desired Message"/>
+    </div>
+
+    <input type="hidden" id="pNumber" value=cookieGetUserid() />
+
+    @*<div class = "mb-3">
+        <label for="Sound Controller">Sound</label> 
+        <input type="radio" name="typeController" id="sound" value="sound"/>
+    </div>
+    <div class = "mb-3">
+        <label for="Light Controller">Light</label> 
+        <input type="radio" name="typeController" id="light" value="light" />
+    </div>*@
+
+   @* <div class ="mb-3">
+        <select name="controllerType" id="ControllerType">
+            <option label="Sound" value="sound"></option>
+            <option label="light" value="light"></option>
+        </select>
+    </div>*@
+
+   @* <input type="tel" name="phone" id="phone" />*@
+
+   <div class = container>
+       <div class = row>
+           <div class = col>
+
+           </div>
+           <div class = col>
+               <button onClick="setSMS()" class="btn btn-primary" style="width:300px">Add Notification</button>
+           </div>
+           <div class = col>
+               <button type ="reset" class="btn btn-primary" style="width:300px">Clear</button>
+           </div>
+           <div class = col>
+               <a asp-controller ="Home" asp-action="IndexAfterLogin" class="btn btn-primary" sytle="width:300px">
+        Back to List
+    </a>
+           </div>
+           <div class = col>
+
+           </div>
+           <div class = col>
+
+           </div>
+
+       </div>
+   </div>
+    
+</form> 
+
+@*<button onclick="cookieGetUserid()">print cookie userid to console</button>*@
+
+<input type="hidden" id="userID" value=cookieGetUserid() />
+
+
+
+    <!-- Leaves a summary at top of the page-->
+    @*<div asp-validation-summary="All"></div>*@
+
+   
+
+    
+
+
+ @*   <div class="mb-3">
+        <label asp-for="soundName"></label>
+        <input asp-for="soundName" class="form-control" />
+        <span asp-validation-for = "soundName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="soundValue"></label>
+        <input asp-for="soundValue" class="form-control" />
+        <span asp-validation-for = "soundValue" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary" style="width:150px">Create</button>
+    <a asp-controller ="Home" asp-action="IndexAfterLogin" class="btn btn-secondary" sytle="width:150px">
+        Back to List
+    </a>
+    </div>*@
+    @*<div class ="mb-3">
+        <label = Add a Value:></label>
+        <input 
+    Add a Value: <input type="text" id="soundValue">*@
+    
+    
+
+
+
+
+<script>
+     async function setSMS() {
+            let phoneNumber = document.getElementById("pNumber").value;
+            let message = document.getElementById("message").value;
+            let threshold = document.getElementById("threshold").value;
+            let userID = document.getElementById("userID").value;
+            await fetch(`http://localhost:5026/sounds/setSMS?phoneNumber=${phoneNumber}&message=${message}&threshold=${threshold}&userID=${userID}`);
+            //await fetch(`http://csd480capstoneapi.azurewebsites.net/sounds/setSMS?phoneNumber=${phoneNumber}&message=${message}&threshold=${threshold}&userID=${userID}`);
+        }
+
+     // COOKIE STUFF
+        function cookieSetUserid() { // create cookie
+            // get userid from html
+            let userID = document.getElementById("userID").value;
+
+            const d = new Date();
+            const days = 7; // number of days cookie lives
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+
+            document.cookie = "CSD480_UserId=" + userID + ";" + expires + ";path=/";
+        }
+
+        function cookieDeleteUserid() { // delete cookie
+            document.cookie = "CSD480_UserId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        function cookieGetUserid() { // get cookie
+            let name = "CSD480_UserId=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    console.log(c.substring(name.length, c.length));
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        window.onload = cookieGetUserid;
+</script>
